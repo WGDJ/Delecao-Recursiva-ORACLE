@@ -1,9 +1,8 @@
-# infanticida
+# Dele√ß√£o recursiva em bancos de dados Oracle
 
 
  * @author wislanildo
  * <p>
- * Classe gera o SQL de deleÁ„o necess·rio para remover tuplas que estejam sendo referenciadas por outras tabelas,
- * gerando SQL de deleÁ„o tambÈm para todas as tabelas relacionadas.
+ * Classe gera o SQL de dele√ß√£o necess√°rio para remover tuplas que estejam sendo referenciadas por outras tabelas,
+ * gerando SQL de dele√ß√£o tamb√©m para todas as tabelas relacionadas.
  * <p>
- * TODO: N„o funciona se o id da tabela possuir chave composta.
