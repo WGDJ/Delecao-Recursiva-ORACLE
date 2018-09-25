@@ -8,12 +8,12 @@ import java.util.*;
 /**
  * @author wislanildo
  * <p>
- * Classe gera o SQL de deleÁ„o necess·rio para remover tuplas que estejam sendo referenciadas por outras tabelas,
- * gerando SQL de deleÁ„o tambÈm para todas as tabelas relacionadas.
+ * Classe gera o SQL de dele√ß√£o necess√°rio para remover tuplas que estejam sendo referenciadas por outras tabelas,
+ * gerando SQL de dele√ß√£o tamb√©m para todas as tabelas relacionadas.
  * <p>
- * TODO: N„o funciona se o id da tabela possuir chave composta.
+ * TODO: N√£o funciona se o id da tabela possuir chave composta.
  */
-public class Infanticida {
+public class Main {
 
     private final static String USER = "usuario";
     private final static String PASSWD = "senha";
@@ -22,7 +22,7 @@ public class Infanticida {
 
     public static void main(String[] args) throws Exception {
 
-        List<String> deletes = queryOfParentsToDelete("MOVIMENTACAO", "ID = 666" );
+        List<String> deletes = queryOfParentsToDelete("EVENTO", "ID = 123" );
 
         for (String delete : deletes) {
             System.out.println(delete);
@@ -67,11 +67,11 @@ public class Infanticida {
 
         gerarSQLUpdateParaNullColunasReferenciamOutrasTablelas(deletes, pkColumName, tableParent, idParent);
 
-        killChilds(deletes, idParent, tableParent, tableParent);
+        deletarDependentes(deletes, idParent, tableParent, tableParent);
         deletes.add("DELETE FROM " + tableParent + " WHERE " + pkColumName + " = " + idParent + ";");
     }
 
-    private static List<String> killChilds(List<String> deletes, Integer idParent, String tableParent, String patriarchTableName) throws Exception {
+    private static List<String> deletarDependentes(List<String> deletes, Integer idParent, String tableParent, String patriarchTableName) throws Exception {
 
         Map<String, String> childInformation = getChildInformation(tableParent);
 
@@ -87,7 +87,7 @@ public class Infanticida {
 
             if (childId != null && !childTableName.equals(patriarchTableName)) {
 
-                killChilds(deletes, childId, childTableName, patriarchTableName);
+                deletarDependentes(deletes, childId, childTableName, patriarchTableName);
 
                 deletes.add("DELETE FROM " + childTableName + " WHERE "+ childColum.toUpperCase() +"=" + idParent + ";");
 
