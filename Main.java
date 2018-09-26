@@ -8,10 +8,8 @@ import java.util.*;
 /**
  * @author wislanildo
  * <p>
- * Classe gera o SQL de deleÃ§Ã£o necessÃ¡rio para remover tuplas que estejam sendo referenciadas por outras tabelas,
- * gerando SQL de deleÃ§Ã£o tambÃ©m para todas as tabelas relacionadas.
+ * Classe gera o DML de deleção necessária para remover tuplas que estejam sendo referenciadas por outras tuplas.
  * <p>
- * TODO: NÃ£o funciona se o id da tabela possuir chave composta.
  */
 public class Main {
 
