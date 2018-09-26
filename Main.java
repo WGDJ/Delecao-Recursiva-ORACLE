@@ -8,10 +8,10 @@ import java.util.*;
 /**
  * @author wislanildo
  * <p>
- * Classe gera o SQL de deleção necessário para remover tuplas que estejam sendo referenciadas por outras tabelas,
- * gerando SQL de deleção também para todas as tabelas relacionadas.
+ * Classe gera o SQL de deleÃ§Ã£o necessÃ¡rio para remover tuplas que estejam sendo referenciadas por outras tabelas,
+ * gerando SQL de deleÃ§Ã£o tambÃ©m para todas as tabelas relacionadas.
  * <p>
- * TODO: Não funciona se o id da tabela possuir chave composta.
+ * TODO: NÃ£o funciona se o id da tabela possuir chave composta.
  */
 public class Main {
 
@@ -22,7 +22,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
 
-        List<String> deletes = queryOfParentsToDelete("EVENTO", "ID = 123" );
+        List<String> deletes = deletePai("EVENTO", "ID = 123" );
 
         for (String delete : deletes) {
             System.out.println(delete);
@@ -30,7 +30,7 @@ public class Main {
 
     }
 
-    private static List<String> queryOfParentsToDelete(String tableName, String whereClause) throws Exception {
+    private static List<String> deletePai(String tableName, String whereClause) throws Exception {
 
         List<String> deletes = new ArrayList<String>();
 
@@ -42,14 +42,14 @@ public class Main {
 
             result = getConnection().prepareStatement("SELECT "+ pkColumName + " FROM " + tableName + " WHERE " + whereClause).executeQuery();
 
-            List<Integer> idsParent = new ArrayList<Integer>();
+            List<Integer> idsPais = new ArrayList<Integer>();
 
             while (result.next()) {
-                idsParent.add(result.getInt(pkColumName));
+                idsPais.add(result.getInt(pkColumName));
             }
             finalizaResultSet(result);
 
-            for (Integer id : idsParent) {
+            for (Integer id : idsPais) {
                 delete(deletes, pkColumName, id, tableName);
                 deletes.add("----------------------------------------------");
             }
@@ -63,15 +63,15 @@ public class Main {
 
     }
 
-    private static void delete(List<String> deletes, String pkColumName, Integer idParent, String tableParent) throws Exception {
+    private static void delete(List<String> deletes, String pkColumName, Integer idPai, String tableParent) throws Exception {
 
-        gerarSQLUpdateParaNullColunasReferenciamOutrasTablelas(deletes, pkColumName, tableParent, idParent);
+        setaNuloEmTodasAsColunasNulableDoPai(deletes, pkColumName, tableParent, idPai);
 
-        deletarDependentes(deletes, idParent, tableParent, tableParent);
-        deletes.add("DELETE FROM " + tableParent + " WHERE " + pkColumName + " = " + idParent + ";");
+        deletarDependentes(deletes, idPai, tableParent, tableParent);
+        deletes.add("DELETE FROM " + tableParent + " WHERE " + pkColumName + " = " + idPai + ";");
     }
 
-    private static List<String> deletarDependentes(List<String> deletes, Integer idParent, String tableParent, String patriarchTableName) throws Exception {
+    private static List<String> deletarDependentes(List<String> deletes, Integer idPai, String tableParent, String patriarchTableName) throws Exception {
 
         Map<String, String> childInformation = getChildInformation(tableParent);
 
@@ -83,13 +83,13 @@ public class Main {
             String childTableName = entry.getValue();
 
             String childColum = getFKColum(constraintName, childTableName);
-            Integer childId = getChildId(childTableName, childColum, idParent);
+            Integer childId = getChildId(childTableName, childColum, idPai);
 
             if (childId != null && !childTableName.equals(patriarchTableName)) {
 
                 deletarDependentes(deletes, childId, childTableName, patriarchTableName);
 
-                deletes.add("DELETE FROM " + childTableName + " WHERE "+ childColum.toUpperCase() +"=" + idParent + ";");
+                deletes.add("DELETE FROM " + childTableName + " WHERE "+ childColum.toUpperCase() +"=" + idPai + ";");
 
             }
 
@@ -98,7 +98,7 @@ public class Main {
         return deletesPostPatriarch;
 
     }
-    private static void gerarSQLUpdateParaNullColunasReferenciamOutrasTablelas(List<String> deletes, String pkColumName, String parentTableName, Integer parentId) throws Exception {
+    private static void setaNuloEmTodasAsColunasNulableDoPai(List<String> deletes, String pkColumName, String parentTableName, Integer parentId) throws Exception {
 
         ResultSet result = null;
         Map<String, String> map = new HashMap<String, String>();
